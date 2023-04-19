@@ -18,11 +18,11 @@ public class TrailsViewModel extends AndroidViewModel {
     public TrailsViewModel(@NonNull Application application) {
         super(application);
         repository= new TrailRepository(application);
-
         trails = repository.getAllTrails();
     }
 
     public LiveData<List<Trail>> getAllTrails() {
+
         return trails;
     }
 }

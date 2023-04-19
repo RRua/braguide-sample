@@ -4,6 +4,8 @@ import android.app.Application;
 import android.os.AsyncTask;
 import android.util.Log;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+
 import com.ruirua.sampleguideapp.model.GuideDatabase;
 import com.ruirua.sampleguideapp.model.Trail;
 import com.ruirua.sampleguideapp.model.TrailAPI;
@@ -17,25 +19,27 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class TrailRepository {
 
     public TrailDAO trailDAO;
-    public LiveData<List<Trail>> allTrails;
+    public MediatorLiveData<List<Trail>> allTrails;
     private GuideDatabase database;
 
     public TrailRepository(Application application){
         database = GuideDatabase.getInstance(application);
         trailDAO = database.trailDAO();
-        init();
-        allTrails = trailDAO.getTrails();
+        allTrails = new MediatorLiveData<>();
+        allTrails.addSource(
+                trailDAO.getTrails(), localTrails -> {
+                    // TODO: ADD cache validation logic
+                    if (localTrails != null && localTrails.size() > 0) {
+                        allTrails.setValue(localTrails);
+                    } else {
+                        makeRequest();
+                    }
+                }
+        );
     }
 
     public void insert(List<Trail> trails){
         new InsertAsyncTask(trailDAO).execute(trails);
-    }
-
-    public void init(){
-        // TODO add cache validation strategy
-        if(allTrails == null || allTrails.getValue() == null || allTrails.getValue().isEmpty()){
-            makeRequest();
-        }
     }
 
     private void makeRequest() {
@@ -43,10 +47,11 @@ public class TrailRepository {
                 .baseUrl("https://c5a2-193-137-92-29.eu.ngrok.io/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        TrailAPI api=retrofit.create(TrailAPI.class);
-        Call<List<Trail>> call=api.getTrails();
+        TrailAPI api = retrofit.create(TrailAPI.class);
+        Call<List<Trail>> call = api.getTrails();
         call.enqueue(new retrofit2.Callback<List<Trail>>() {
             @Override
+
             public void onResponse(Call<List<Trail>> call, Response<List<Trail>> response) {
                 if(response.isSuccessful()) {
                     insert(response.body());
@@ -63,10 +68,10 @@ public class TrailRepository {
         });
     }
 
-
     public LiveData<List<Trail>> getAllTrails(){
         return allTrails;
     }
+
     private static class InsertAsyncTask extends AsyncTask<List<Trail>,Void,Void> {
         private TrailDAO trailDAO;
 

@@ -30,10 +30,9 @@ public class TrailListFragment extends Fragment {
 
     private int mColumnCount = 1;
 
-
     private TrailsViewModel trailsViewModel;
 
-    private List<Trail> trails = new ArrayList<>();
+    // private List<Trail> trails = new ArrayList<>();
 
 
 
@@ -44,8 +43,6 @@ public class TrailListFragment extends Fragment {
     public TrailListFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static TrailListFragment newInstance(int columnCount) {
         TrailListFragment fragment = new TrailListFragment();
         Bundle args = new Bundle();
@@ -58,7 +55,6 @@ public class TrailListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
@@ -71,14 +67,14 @@ public class TrailListFragment extends Fragment {
 
         trailsViewModel = new ViewModelProvider(this).get(TrailsViewModel.class);
         trailsViewModel.getAllTrails().observe(getViewLifecycleOwner(), x -> {
-            this.trails.clear();
-            this.trails.addAll(x);
-            loadRecyclerView(view);
+
+                loadRecyclerView(view, x);
+
         });
         return view;
     }
 
-    private void loadRecyclerView(View view){
+    private void loadRecyclerView(View view, List<Trail> trails){
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;

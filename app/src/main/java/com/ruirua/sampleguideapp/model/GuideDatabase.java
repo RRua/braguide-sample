@@ -12,7 +12,7 @@ import com.ruirua.sampleguideapp.model.Trail;
 import com.ruirua.sampleguideapp.model.TrailDAO;
 import com.ruirua.sampleguideapp.model.User;
 
-@Database(entities = {Trail.class, User.class}, version = 6)
+@Database(entities = {Trail.class, User.class}, version = 961)
 public abstract class GuideDatabase extends RoomDatabase {
 
     private static final String DATABASE_NAME = "BraGuide";
@@ -44,12 +44,13 @@ public abstract class GuideDatabase extends RoomDatabase {
     };
 
     static  class  PopulateDbAsyn extends AsyncTask<Void,Void,Void>{
-        private TrailDAO traildao;
-        public PopulateDbAsyn(GuideDatabase catDatabase)
-        {
 
-            traildao=catDatabase.trailDAO();
+        private TrailDAO traildao;
+
+        public PopulateDbAsyn(GuideDatabase catDatabase) {
+            traildao = catDatabase.trailDAO();
         }
+
         @Override
         protected Void doInBackground(Void... voids) {
             traildao.deleteAll();

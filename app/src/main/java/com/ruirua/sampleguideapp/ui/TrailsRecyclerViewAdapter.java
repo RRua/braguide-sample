@@ -7,8 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-
 import com.ruirua.sampleguideapp.R;
 import com.ruirua.sampleguideapp.model.Trail;
 import com.squareup.picasso.Picasso;
@@ -35,7 +33,9 @@ public class TrailsRecyclerViewAdapter extends RecyclerView.Adapter<TrailsRecycl
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).getId());
-        Picasso.get().load(mValues.get(position).getUrl().replace("http", "https")).into(holder.imageView);
+        Picasso.get().load(mValues.get(position)
+                .getUrl().replace("http", "https"))
+                .into(holder.imageView);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class TrailsRecyclerViewAdapter extends RecyclerView.Adapter<TrailsRecycl
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
+            mIdView = view.findViewById(R.id.item_number);
             imageView = view.findViewById(R.id.cardimage);
         }
 
